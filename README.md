@@ -7,11 +7,11 @@ The authors of this repository have not worked with Makefiles before and hence h
     ```shell
     $ g++ <filename>.cpp -o <executable_name>
     ```
-and for the parallel ones:
+    and for the parallel ones:
     ```shell
     $ g++ -fopenmp <filename>.cpp -o <executable_name>
     ```
-    
+
 2. Run the executable in the shell:
     ```shell
     $ ./<executable_name>
