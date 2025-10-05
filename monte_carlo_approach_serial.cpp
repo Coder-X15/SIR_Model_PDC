@@ -25,7 +25,7 @@ double transmission_prob, recovery_prob; // transmission and recovery probabilit
 graph G; // the graph
 people P; // the people's states
 ifstream fin("edges.txt"); // input file stream
-string sim_path = "./sim/states.csv"; // where the simulation is being written to
+string sim_path = "./sim_mc/states.csv"; // where the simulation is being written to
 
 // helper functions
 

@@ -20,38 +20,39 @@ using namespace std;
 # define RECOVERED 2
 
 // we use the integer indices to represent the nodes
-// we read the following from `edges.txt` and generate the graph:
+// we read the following from `edges_bam.txt` and generate the graph:
 //  1. Population size
-//  2. Transmission probability
-//  3. Recovery probability
-//  4. Edges of the graph
+//  2. Recovery probability
+//  3. Edges of the graph (hence the number of infected nodes in the network)
 // after getting the graph, we randomly infect a few nodes as given by the user input
 
 // population metadata
 int N; // population size
-int initial_infected; // number of initially infected nodes
-double transmission_prob, recovery_prob; // transmission and recovery probabilities
+double transmission_prob, recovery_prob; // recovery probability
 graph G; // the graph
 people P; // the people's states
-ifstream fin("edges.txt"); // input file stream
-string sim_path = "./sim/states.csv"; // where the simulation is being written to
+ifstream fin("edges_bam.txt"); // input file stream
+string sim_path = "./sim_bam/states.csv"; // where the simulation is being written to
 
 // helper functions
 
 // 1. read the graph from the file
 void read_graph();
 
-// 2. randomly infect a few nodes
-void randomly_infect(int);
-
-// 3. print the states of the nodes into a csv file
+// 2. print the states of the nodes into a csv file
 void print_states(people);
 
-// 4. a random yes/np decision based on a probability
+// 3. a random yes/np decision based on a probability
 bool random_decision(double);
 
-// 5. evolution function
-void evolve(int time_steps);
+// 4. evolution function
+void evolve(int);
+
+// 5. get the set of infected nodes
+set<int> get_infected();
+
+// 6. choose a set of nodes based on the law of preferential attachment
+set<int> choose(set<int>);
 
 int main(){
     // try to clear the file if it exists
@@ -66,13 +67,12 @@ int main(){
     }
     read_graph();
     cout << "Setting:\n    Total Population = " << N ;
-    cout << "\n    Initial Infected = " << initial_infected;
-    cout << "\n    Transmission Probability = " << transmission_prob;
+    cout << "\n    Initial Infected = " << (get_infected()).size();
+    cout  << "\n    Transmission Probability = " << transmission_prob;
     cout  << "\n    Recovery Probability = " << recovery_prob << endl;
     int time_steps;
     cout << "Enter the number of time steps: ";
     cin >> time_steps;
-    randomly_infect(initial_infected);
     print_states(P); // print the initial states
     cout << "Starting simulation... " << endl;
     cout << "Time step 0: S = " << count(P.begin(), P.end(), SUSCEPTIBLE); 
@@ -82,7 +82,17 @@ int main(){
     return 0;
 }
 
-// Function 4
+// Function 5
+set<int> get_infected(){
+    set<int> infected = {};
+    for(int i = 0; i < N; i++){
+        if(P[i] == INFECTED){infected.insert(i);}
+    }
+
+    return infected;
+}
+
+// Function 3
 bool random_decision(double prob){
     double rand_val = (double)rand() / RAND_MAX;
     return rand_val < prob;
@@ -90,38 +100,19 @@ bool random_decision(double prob){
 
 // Function 1
 void read_graph(){
-    fin >> N >> transmission_prob >> recovery_prob >> initial_infected;
+    fin >> N >> transmission_prob >> recovery_prob;
     G.resize(N); // resize the graph
-    // since the assumption under the Barabasi-Albert graph as in the paper is that
-    // each node in the whole sample is linked by at least one link, we shall connect
-    // every node in the list of nodes in a loop
-    for(int i = 0; i < N;i++){
-        G[i%N].push_back((i+1)%N);
-        G[(i+1)%N].push_back(i%N);
-    }
     P.resize(N, SUSCEPTIBLE); // populating the people vector with SUSCEPTIBLE state (all are susceptible initially)
     int u, v;
     while(fin >> u >> v){
-        if(find(G[u].begin(), G[u].end(), v) == G[u].end()){G[u].push_back(v);}
+        if(find(G[u].begin(), G[u].end(), v) == G[u].end()){G[u].push_back(v);} 
         if(find(G[v].begin(), G[v].end(), u) == G[v].end()){G[v].push_back(u);}
+        P[u] = INFECTED; P[v] = INFECTED;
     }
     fin.close();
 }
 
 // Function 2
-void randomly_infect(int initial_infected){
-    int infected_count = 0;
-    while(infected_count < initial_infected){
-        int index = rand() % N;
-        if(P[index] == INFECTED) continue; // already infected
-        P[index] = INFECTED;
-        cout << "Infected node " << index << endl;
-        infected_count++;
-    }
-    cout << "Randomly infected " << initial_infected << " nodes.\n";
-}
-
-// Function 3
 void print_states(people P){
     ofstream fout(sim_path, ios::app);
     for(int state : P){
@@ -131,24 +122,29 @@ void print_states(people P){
     fout.close();
 }
 
-// Function 5
+// Function 4
 void evolve(int time_steps){
     double start = clock();
     for(int i = 0; i < time_steps; i++){
         int S, I, R;
         people new_P = P; // copy the current states
+        set<int> infected = get_infected();
         for(int node = 0; node < N; node++){
-            if(P[node] == INFECTED){
-                // try to infect neighbors
-                for(int neighbor : G[node]){
-                    if(P[neighbor] == SUSCEPTIBLE && random_decision(transmission_prob)){
-                        new_P[neighbor] = INFECTED;
-                    }
+            if(P[node] == SUSCEPTIBLE){
+                // connect to the graph of infected persons
+                set<int> to_connect = choose(infected);
+                for(auto target : to_connect){
+                    // connect to target, be counted as infected
+                    G[target].push_back(node);
+                    G[node].push_back(target);
+                    new_P[node] = INFECTED;
                 }
-                // try to recover
-                if(random_decision(recovery_prob)){
-                    new_P[node] = RECOVERED;
-                }
+                
+            } else {continue;}
+        }
+        for(auto candidate : infected){
+            if(random_decision(recovery_prob)){
+                new_P[candidate] = RECOVERED;
             }
         }
         S = count(new_P.begin(), new_P.end(), SUSCEPTIBLE);
@@ -160,4 +156,21 @@ void evolve(int time_steps){
     }
     double end = clock();
     cout << "Simulation completed in " << (end - start) / CLOCKS_PER_SEC << " seconds.\n";
+}
+
+
+// Function 6
+set<int> choose(set<int> available){
+    double total_deg = 0;
+    set<int> ret = {};
+    for(auto choice : available){
+        total_deg += G[choice].size();
+    }
+    for(auto choice : available){
+        double prob = G[choice].size() / total_deg; 
+        if(random_decision(prob * transmission_prob)){
+            ret.insert(choice);
+        }
+    }
+    return ret;
 }
