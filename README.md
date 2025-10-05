@@ -1,7 +1,7 @@
 ## SIR Model Simulation Using Monte Carlo and Barabási-Albert Graphs
 > **Authored by**: Sam Ruben Abraham and Anushka Kishor Nikam
 
-This repository contains C++ and Python code for simulating the spread of epidemics using the SIR (Susceptible-Infected-Recovered) model on different network structures, including the Barabási-Albert (BA) model. The project also includes tools for visualizing the simulation results.
+This repository contains C++ and Python code for simulating the spread of epidemics using the SIR (Susceptible-Infected-Recovered) model on a Barabási-Albert (BA) network. The project also includes tools for visualizing the simulation results.
 
 ## Directory and File Overview
 
