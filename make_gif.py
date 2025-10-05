@@ -2,6 +2,13 @@ import networkx as nx
 import matplotlib.pyplot as plt
 import imageio
 import csv
+import os
+
+def cleanup():
+    # cleaning up output directory before every simulation
+    for file in os.listdir("./sim"):
+        if file.endswith(".png") or file.endswith(".gif"):
+            os.remove("./sim/" + file)
 
 def read_graph_from_file(filename):
     """Reads edges from file and creates a graph."""
@@ -9,9 +16,10 @@ def read_graph_from_file(filename):
     with open(filename, 'r') as f:
         lines = f.readlines()
         N = int(lines[0].strip())  # first line is number of nodes
-        for line in lines[4:]:
+        for line in lines[1:]:
             u, v = map(int, line.strip(',').split())
-            G.add_edge(u, v)
+            if not G.has_edge(u, v):
+                G.add_edge(u, v)
         for i in range(N):
             if i not in G:
                 G.add_node(i)
@@ -53,6 +61,9 @@ def main():
     edges_file = 'edges.txt'
     states_file = './sim/states.csv'  # your CSV file with rows = frames
     output_gif = './sim/epidemic.gif'
+
+    # Step 0: Clean up
+    cleanup()
 
     # Step 1: Read graph
     G = read_graph_from_file(edges_file)

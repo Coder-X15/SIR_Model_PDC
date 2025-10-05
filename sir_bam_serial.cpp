@@ -15,17 +15,18 @@ using namespace std;
 //  1. Population size
 //  2. Transmission probability
 //  3. Recovery probability
-//  4. Edges of the graph
+//  4. The number of initially infected people
 // after getting the graph, we randomly infect a few nodes as given by the user input
 
 // population metadata
 int N; // population size
 int initial_infected; // number of initially infected nodes
 double transmission_prob, recovery_prob; // transmission and recovery probabilities
+int m; // the number of connects that a node (person) may have on average per timestep
 graph G; // the graph
 people P; // the people's states
-ifstream fin("edges.txt"); // input file stream
-string sim_path = "./sim_mc/states.csv"; // where the simulation is being written to
+ifstream fin("params.txt"); // input file stream
+string sim_path = "./sim/states.csv"; // where the simulation is being written to
 
 // helper functions
 
@@ -44,8 +45,12 @@ bool random_decision(double);
 // 5. evolution function
 void evolve(int time_steps);
 
+// 6. Create the Barabasi-Albert network
+void create_barabasi_albert_network();
+
 int main(){
     // try to clear the file if it exists
+    srand(time(NULL));
     cout << "BY: Sam Ruben Abraham (2023BCD0002) \n    Anushka Kishor Nikam (2023BCS0047)" << endl;
     try{
         fstream fout("./sim/states.csv", ios::out | ios::trunc);
@@ -56,6 +61,7 @@ int main(){
         // do nothing
     }
     read_graph();
+    create_barabasi_albert_network();
     cout << "Setting:\n    Total Population = " << N ;
     cout << "\n    Initial Infected = " << initial_infected;
     cout << "\n    Transmission Probability = " << transmission_prob;
@@ -81,15 +87,14 @@ bool random_decision(double prob){
 
 // Function 1
 void read_graph(){
-    fin >> N >> transmission_prob >> recovery_prob >> initial_infected;
+    fin >> N >> transmission_prob >> recovery_prob >> initial_infected >> m;
+    if(m > N){
+        throw("m should be smaller than N");
+    }
     G.resize(N); // resize the graph
     P.resize(N, SUSCEPTIBLE); // populating the people vector with SUSCEPTIBLE state (all are susceptible initially)
-    int u, v;
-    while(fin >> u >> v){
-        G[u].push_back(v);
-        G[v].push_back(u);
-    }
     fin.close();
+    cout << "Finished taking input parameters" << endl;
 }
 
 // Function 2
@@ -144,4 +149,59 @@ void evolve(int time_steps){
     }
     double end = clock();
     cout << "Simulation completed in " << (end - start) / CLOCKS_PER_SEC << " seconds.\n";
+}
+
+// Function 6
+void create_barabasi_albert_network(){
+    cout << "Creating the requisite Barabasi-Albert network..." << endl;
+    vector<int> node_pool;
+
+    // we'll initially start with a complete graph of m + 5 nodes
+    int m0 = m + 5; // initialising a random growth rate
+    if(m0 > N){
+        m0 = m;
+    }
+    for(int i = 0; i < m0; i++){
+        for(int j = i+1; j < m0; j++){
+            G[i].push_back(j);
+            G[j].push_back(i);
+        }
+    }
+
+    // populate the node_pool to do preferential attachment
+    for(int i = 0; i < m0; i++){
+        for(int target : G[i]){
+            node_pool.push_back(i);
+        }
+    }
+
+    // growth based on preferential attachment
+    for(int k = m0; k < N; k++){
+        cout << "   Connecting node: " << k << "..." << endl;
+        set<int> targets;
+        while(targets.size() < m){
+            int idx = rand()%node_pool.size();;
+            int target = node_pool[idx];
+            if(target != k){targets.insert(target);}
+        }
+
+        for(int target : targets){
+            G[k].push_back(target);
+            G[target].push_back(k);
+
+            node_pool.push_back(k);
+            node_pool.push_back(target);
+
+        }   
+    }
+
+    // writing output graph into file for simulation purposes
+    ofstream output("edges.txt");
+    output << N << endl;
+    for(int node = 0; node < N; node++){
+        for(int target : G[node]){
+            output << node << " " << target << endl;
+        }
+    }
+    output.close();
 }
