@@ -56,3 +56,6 @@ This repository contains C++ and Python code for simulating the spread of epidem
 **Note:**
 - PDF files and executables are not described here.
 - For additional simulation methods, add or modify C++ source files as needed.
+
+## Simulation Results (Eg.)
+![](https://github.com/Coder-X15/SIR_Model_PDC/blob/8b24daa4dfdffd6ce1584a79229135dd1a2f8de0/sim/epidemic.gif)
