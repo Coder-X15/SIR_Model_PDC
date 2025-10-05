@@ -1,40 +1,58 @@
-## (**TODO**:Update documentation)
+## SIR Model Simulation Using Monte Carlo and Barabási-Albert Graphs
+> **Authored by**: Sam Ruben Abraham and Anushka Kishor Nikam
 
-# SIR Model Simulation Using Both Monte Carlo Simulation and Barabasi-Albert Graphs
-The SIR Model is a prominent model, albeit basic, in simulating the spread of epidemics in a population. This repository contains the work of Sam Ruben Abraham and Anushka Kishor Nikam in implementing these approaches according to their understanding and also attempts at parallelizing the same using OpenMP.
+This repository contains C++ and Python code for simulating the spread of epidemics using the SIR (Susceptible-Infected-Recovered) model on different network structures, including the Barabási-Albert (BA) model. The project also includes tools for visualizing the simulation results.
 
-## Files:
-1. `edges.txt` contains the following values in order:
-    * The total population size
-    * The infection rate
-    * The recovery rate
-    * The initial number of infected people
-    * The connected edges in order (they are undirected edges, so order of vertices does not matter)
+## Directory and File Overview
 
-2. `make_gif.py` - makes a GIF animation of the epidemic spread in the `./sim` folder
-3. `sim` folder - holds simnulation data, individual frames of the evolution and the GIF animation
-4. `<method>_serial.cpp` - the C++ serial code implementing that method for simulations
-5. `<method>_parallel.cpp` - the C++ parallel code implementing that method for simulations
+- `sir_bam_serial.cpp`  
+    Serial C++ implementation of the SIR model on a Barabási-Albert graph.
 
-##  How to run it
-The authors of this repository have not worked with Makefiles before and hence have not included them in the project. Hence, to run the programs properly:
-1. **Choose the file you would like to execute**. The file names of the C++ source programs imply what type of simulation they are going to work on. For the serial programs, do:
-    ```shell
-    $ g++ <filename>.cpp -o <executable_name>
-    ```
-    and for the parallel ones:
-    ```shell
-    $ g++ -fopenmp <filename>.cpp -o <executable_name>
-    ```
+- `params.txt`  
+    Input parameters for the simulation (e.g., population size, infection rate, recovery rate, initial infected count).
 
-2. Run the executable in the shell:
-    ```shell
-    $ ./<executable_name>
-    ```
+- `make_gif.py`  
+    Python script to generate a GIF animation of the epidemic spread using PNG frames in the `sim/` directory.
 
-3. To view a GIF animation fo the same, run:
-    ```shell
-    $ python3 make_gif.py 
-    ```
+- `sim/`  
+    Output directory containing:
+    - `epidemic.gif`: Animation of the epidemic spread
+    - `frame_*.png`: Individual frames of the simulation
+    - `states.csv`: State evolution of each node (0 = Susceptible, 1 = Infected, 2 = Recovered)
 
-4. To check for the output, look in the `sim` folder. It contains many PNG files, indicating the individual frames in the epidemic simulation, an `epidemic.gif` showing a GIF animation of the same and a `states.csv`, which shows the evolution of the $i$-th node in the graph from states `SUSCEPTIBLE` (= 0), `INFECTED` (= 1) and `RECOVERED` (=2), row-wise.
+## How to Run the Simulations
+
+1. **Compile the C++ simulation code**
+     - For serial code:
+         ```shell
+         g++ sir_bam_serial.cpp -o sir_bam_serial.exe
+         ```
+     - (If you have parallel code, use `-fopenmp` as needed.)
+
+2. **Prepare the input**
+     - Edit `params.txt` to set simulation parameters as required by the C++ code.
+
+3. **Run the simulation**
+     - Execute the compiled program:
+         ```shell
+         .\sir_bam_serial.exe
+         ```
+     - Output files will be generated in the `sim/` directory.
+
+4. **Visualize the results**
+     - To create a GIF animation from the simulation frames:
+         ```shell
+         python make_gif.py
+         ```
+     - The resulting `epidemic.gif` will appear in the `sim/` folder.
+
+## Output Details
+
+- **PNG frames**: Each `frame_*.png` shows the state of the network at a simulation step.
+- **epidemic.gif**: Animation of the epidemic progression.
+- **states.csv**: Each row shows the state (0, 1, 2) of every node at each time step.
+
+---
+**Note:**
+- PDF files and executables are not described here.
+- For additional simulation methods, add or modify C++ source files as needed.
