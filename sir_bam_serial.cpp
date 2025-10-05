@@ -16,6 +16,7 @@ using namespace std;
 //  2. Transmission probability
 //  3. Recovery probability
 //  4. The number of initially infected people
+//  5. The number of edges that a node adds upon being added to the Barabasi-Albert graph
 // after getting the graph, we randomly infect a few nodes as given by the user input
 
 // population metadata
@@ -161,6 +162,8 @@ void create_barabasi_albert_network(){
     if(m0 > N){
         m0 = m;
     }
+    
+    // make a complete graph initially to propagate the growth mechanism
     for(int i = 0; i < m0; i++){
         for(int j = i+1; j < m0; j++){
             G[i].push_back(j);
