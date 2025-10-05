@@ -54,8 +54,8 @@ def draw_and_save_frames(G, states, pos, output_gif):
 
         images.append(imageio.imread(temp_file))
 
-    # Save as GIF
-    imageio.mimsave(output_gif, images, duration=0.5)  # 0.5 sec per frame
+    # Save as GIF (loop=0 -> infinite loop)
+    imageio.mimsave(output_gif, images, duration=0.5, loop=0)  # 0.5 sec per frame
 
 def main():
     edges_file = 'edges.txt'
