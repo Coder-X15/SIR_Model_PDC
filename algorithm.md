@@ -19,5 +19,5 @@ Total number of operations : $5(N-m_0)m + m_0^2 = 5Nm + m_0(m_0 - 5m)$. Now, if 
 Total time complexity: $\mathcal{O}(t_\text{stop}(N  + E))$
 
 ## Opportunities for Parallelisation : TODO
-## Parallelised Time Complexity
-## Checking Amdalh's Law
+## Parallelised Time Complexity :TODO
+## Checking Amdalh's Law : TODO
