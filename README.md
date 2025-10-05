@@ -1,3 +1,5 @@
+## (**TODO**:Update documentation)
+
 # SIR Model Simulation Using Both Monte Carlo Simulation and Barabasi-Albert Graphs
 The SIR Model is a prominent model, albeit basic, in simulating the spread of epidemics in a population. This repository contains the work of Sam Ruben Abraham and Anushka Kishor Nikam in implementing these approaches according to their understanding and also attempts at parallelizing the same using OpenMP.
 
