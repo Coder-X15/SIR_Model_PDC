@@ -111,6 +111,6 @@ If you want, I can:
 - add a `Makefile`/task for Windows to simplify repeated runs.
 
 ---
-Simulation results examples
+### Simulation results examples
 ![](sim/epidemic.gif)
 ![](sim/comparison.png)
