@@ -15,8 +15,8 @@ Total number of operations : $5(N-m_0)m + m_0^2 = 5Nm + m_0(m_0 - 5m)$. Now, if 
 
 ## Part 2: The Monte-Carlo Simulation of Infection Spread
 1. Increase the time step $t$ if $t < t_{\text{stop}}$
-2. For each node in the list of nodes ($N + 1$ loop iterations since we depend on numerical indices), if the node is infected, infect all of its susceptible neighbours with probability $\beta$(over all iterations of the inner loop, we'll have at least $E$ operations done) and then try to heal itself with probability $\gamma$ ($1$ operation). We can observe that over all the iterations of the inner loop, we will have done at most $N + E$ operations.
-Total time complexity: $\mathcal{O}(t_\text{stop}(N  + E))$
+2. For each node in the list of nodes ($N + 1$ loop iterations since we depend on numerical indices), if the node is infected, infect all of its susceptible neighbours with probability $\beta$(over all iterations of the inner loop, we'll have at least $E$ operations done) and then try to heal itself with probability $\gamma$ ($1$ operation). We can observe that over all the iterations of the inner loop, we will have done at most $Nm$ operations (since the operation involved is just infecting a neighbour and then curing itself, once can see that the number of operations will be approximately equal to the number of edges, which, using the average count of $m$ edges per node, we have that the time complexity is $\mathcal{O}(E) \leq \mathcal{O}(Nm)$ per loop).
+Total time complexity: $\mathcal{O}(t_\text{stop}Nm)$
 
 ## Opportunities for Parallelisation : TODO
 ## Parallelised Time Complexity :TODO
