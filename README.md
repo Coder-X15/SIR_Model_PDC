@@ -113,4 +113,4 @@ If you want, I can:
 ---
 ### Simulation results examples
 ![](sim/epidemic.gif)
-![](sim/comparison.png)
+![](https://github.com/Coder-X15/SIR_Model_PDC/blob/5a246c0b9119b0ad6964760578a5b519619070a4/sim/comparison.png)
