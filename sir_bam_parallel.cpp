@@ -1,5 +1,6 @@
 # include <bits/stdc++.h>
 # include <fstream>
+# include <omp.h>
 
 using namespace std;
 
@@ -138,17 +139,23 @@ void evolve(int time_steps){
     for(int i = 0; i < time_steps; i++){
         double S, I, R;
         people new_P = P; // copy the current states
-        for(int node = 0; node < N; node++){
-            if(P[node] == INFECTED){
-                // try to infect neighbors
-                for(int neighbor : G[node]){
-                    if(P[neighbor] == SUSCEPTIBLE && random_decision(transmission_prob)){
-                        new_P[neighbor] = INFECTED;
+        # pragma omp parallel
+        {
+            # pragma omp for schedule(dynamic, 8)
+            for(int node = 0; node < N; node++){
+                if(P[node] == INFECTED){
+                    // try to infect neighbors
+                    for(int neighbor : G[node]){
+                        if(P[neighbor] == SUSCEPTIBLE && random_decision(transmission_prob)){
+                            # pragma omp atomic write
+                            new_P[neighbor] = INFECTED;
+                        }
                     }
-                }
-                // try to recover
-                if(random_decision(recovery_prob)){
-                    new_P[node] = RECOVERED;
+                    // try to recover
+                    if(random_decision(recovery_prob)){
+                        # pragma omp atomic write
+                        new_P[node] = RECOVERED;
+                    }
                 }
             }
         }
