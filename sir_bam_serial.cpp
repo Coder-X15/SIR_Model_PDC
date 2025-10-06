@@ -55,6 +55,7 @@ void write_log(const vector<double>&);
 int main(){
     // try to clear the file if it exists
     srand(time(NULL));
+    double start = clock();
     cout << "BY: Sam Ruben Abraham (2023BCD0002) \n    Anushka Kishor Nikam (2023BCS0047)" << endl;
     try{
         fstream fout("./sim/states.csv", ios::out | ios::trunc);
@@ -78,7 +79,10 @@ int main(){
     cout  << "\n    Recovery Probability = " << recovery_prob << endl;
     int time_steps;
     cout << "Enter the number of time steps: ";
+    double input_start = clock();
     cin >> time_steps;
+    double input_end = clock();
+    double input_duration = (input_end - input_start)/CLOCKS_PER_SEC;
     randomly_infect(initial_infected);
     print_states(P); // print the initial states
     cout << "Starting simulation... " << endl;
@@ -87,6 +91,8 @@ int main(){
     double R = count(P.begin(), P.end(), RECOVERED);
     write_log({S, I, R});
     evolve(time_steps);
+    double end = clock();
+    cout << "Whole program ended in " << (end - start)/CLOCKS_PER_SEC << " seconds (Input wait time: " << input_duration << " seconds)" << endl;
     return 0;
 }
 

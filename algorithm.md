@@ -20,4 +20,4 @@ Total time complexity: $\mathcal{O}(t_\text{stop}Nm)$
 
 ## Opportunities for Parallelisation : TODO
 ## Parallelised Time Complexity :TODO
-## Checking Amdalh's Law : TODO
+## Checking Amdahl's Law : TODO
