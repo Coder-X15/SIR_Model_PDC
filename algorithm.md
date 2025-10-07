@@ -8,7 +8,7 @@ Nothing much in here. The input is read from `params.txt` in the following order
 5. The number of edges that a node adds upon being added to the Barabasi-Albert graph ($m$ or `m`)
 
 ### Part 1: Creating the Barabasi-Albert Network
-1. Initially, make a complete network using $m_0$ out of the $N$ available nodes ($\mathcal{O}(m_0^2)$). The decision regarding the value of $m_0$ is done within a constant time.
+1. Initially, make a complete network using $m_0$ out of the $N$ available nodes ( $\mathcal{O}(m_0^2)$ ). The decision regarding the value of $m_0$ is done within a constant time.
 2. Take the connected $m_0$ nodes, and append as many copies of each vertex as the degree of the vertex into a node pool($m_0^2$ operations)
 3. For each of the other $N - m_0$ vertices, choose $m$ vertices randomly (assuming that the choosing mechanism doesn't choose the same vertex as the one in the current loop iteration, we can say that the complexity comes to $m$ operations) and connect the vertex in the current loop iteration to each of them and then add the pair to the node pool($4m$ operations in total). Now, the total number of operations should be $(N - m_0)(m + 4m) = 5Nm - 5mm_0$
 Total number of operations : $5(N-m_0)m + m_0^2 = 5Nm + m_0(m_0 - 5m)$. Now, if $m_0 >> 5m$, then we have that the number of operations approximate to $5Nm + m_0^2$, thus the time complexity of the algorithm is $\mathcal{O}(Nm + m_0^2)$.
