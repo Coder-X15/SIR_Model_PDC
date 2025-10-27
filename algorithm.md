@@ -96,5 +96,3 @@ void evolve(int time_steps){
 
 ## Parallelised Time Complexity
 Notice that according to the previous section, the region we have parallelised may create nearly $2E$ threads. Now, according to the Handshaking Theorem, the sum of all the degrees of an undirected graph will be greater than or equal to twice the number of edges; this gives us that $Nm \geq 2E$ threads will be created at most ansd so upon parallelising these using $p$ processors, the total work of $Nm$ operations is divided down to $\frac{Nm}{p}$ operations run concurrently, so the total time complexity per one outer loop iteration will be $\mathcal{O}(\frac{Nm}{p})$. This gives us the total parallelised time complexity of the `evolve` function as $\mathcal{O}(\frac{Nm}{p}T)$. So, on average, our parallelised time complexity will be $\mathcal{O}(\frac{Nm}{p}T + m_0^2)$
-
-## Checking Amdahl's Law : TODO
